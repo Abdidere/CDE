@@ -278,12 +278,13 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        padding: 24px;
+        padding: 24px 8px;
         min-height: 85vh;
     }
 
     .editor-textarea {
         width: 100%;
+        max-width: none;
         min-height: 1000px;
         padding: 16px;
         border: 1px solid #e0e0e0;
