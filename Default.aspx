@@ -296,6 +296,7 @@
         resize: vertical;
         outline: none;
         transition: border-color 0.2s, box-shadow 0.2s;
+        height: 363px;
     }
 
     .editor-textarea:focus {
