@@ -106,14 +106,7 @@
         display: block;
     }
 
-    .dropdown-container:hover .dropdown-menu {
-        display: block;
-    }
 
-    .dropdown-container:hover .dropdown-btn {
-        border-color: #000;
-        background: #f5f5f5;
-    }
 
     .dropdown-menu-header {
         padding: 12px 16px;
@@ -445,7 +438,7 @@
     <div class="top-bar">
         <div class="top-bar-left">
             <div class="dropdown-container">
-                <button type="button" class="dropdown-btn" id="fileBtn">
+                <button type="button" class="dropdown-btn" id="fileBtn" onclick="toggleFileDropdown()">
                     File
                 </button>
                 <div class="dropdown-menu" id="fileDropdown" style="left: 0; right: auto;">
@@ -468,7 +461,7 @@
 
         <div class="top-bar-right">
             <div class="dropdown-container">
-                <button type="button" class="dropdown-btn" id="versionBtn">
+                <button type="button" class="dropdown-btn" id="versionBtn" onclick="toggleVersionDropdown()">
                     Version History
                 </button>
                 <div class="dropdown-menu" id="versionDropdown">
@@ -496,7 +489,7 @@
             </div>
 
             <div class="dropdown-container">
-                <button type="button" class="dropdown-btn" id="shareBtn">
+                <button type="button" class="dropdown-btn" id="shareBtn" onclick="toggleShareDropdown()">
                     Share
                 </button>
                 <div class="dropdown-menu" id="shareDropdown">
