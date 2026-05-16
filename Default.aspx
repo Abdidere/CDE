@@ -438,6 +438,8 @@
     }
 </style>
 
+<input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)" />
+
 <div class="editor-container">
     <div class="top-bar">
         <div class="top-bar-left">
@@ -521,24 +523,7 @@
     </div>
 </div>
 
-<div id="openFilesModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            Open Document
-        </div>
-        <div class="modal-body" id="openFilesContainer">
-            <div class="file-list-container">
-                <button class="file-item-btn" onclick="selectFile('document1.txt')">document1.txt</button>
-                <button class="file-item-btn" onclick="selectFile('document2.txt')">document2.txt</button>
-                <button class="file-item-btn" onclick="selectFile('notes.txt')">notes.txt</button>
-                <button class="file-item-btn" onclick="selectFile('report.txt')">report.txt</button>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="modal-cancel-btn" onclick="closeOpenFilesModal()">Cancel</button>
-        </div>
-    </div>
-</div>
+
 
 <script>
     document.addEventListener('click', (e) => {
@@ -648,19 +633,24 @@
     }
 
     function openDocumentClick() {
-        const modal = document.getElementById('openFilesModal');
-        modal.style.display = 'flex';
+        document.getElementById('fileInput').click();
         document.getElementById('fileDropdown').classList.remove('active');
         document.getElementById('fileBtn').classList.remove('active');
     }
 
-    function closeOpenFilesModal() {
-        document.getElementById('openFilesModal').style.display = 'none';
-    }
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-    function selectFile(fileName) {
-        showNotification('Opening ' + fileName);
-        closeOpenFilesModal();
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('docEditor').value = e.target.result;
+            document.querySelector('.document-title').textContent = file.name;
+            showNotification('Opened ' + file.name);
+        };
+        reader.readAsText(file);
+        
+        event.target.value = '';
     }
 
     function saveDocument() {
@@ -712,11 +702,7 @@
         }, 2000);
     });
 
-    document.getElementById('openFilesModal').addEventListener('click', (e) => {
-        if (e.target === document.getElementById('openFilesModal')) {
-            closeOpenFilesModal();
-        }
-    });
+
 </script>
 
 </asp:Content>
