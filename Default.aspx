@@ -445,17 +445,17 @@
     <div class="top-bar">
         <div class="top-bar-left">
             <div class="dropdown-container">
-                <button class="dropdown-btn" id="fileBtn">
+                <button type="button" class="dropdown-btn" id="fileBtn">
                     File
                 </button>
                 <div class="dropdown-menu" id="fileDropdown" style="left: 0; right: auto;">
                     <div class="dropdown-menu-content">
                         <div style="display: flex; flex-direction: column; gap: 4px;">
-                            <button class="file-option-btn" onclick="newDocument()">New</button>
-                            <button class="file-option-btn" onclick="openDocumentClick()">Open</button>
-                            <button class="file-option-btn" onclick="saveDocument()">Save</button>
-                            <button class="file-option-btn" onclick="downloadDocument()">Download</button>
-                            <button class="file-option-btn" onclick="closeDocument()">Close</button>
+                            <button type="button" class="file-option-btn" onclick="newDocument()">New</button>
+                            <button type="button" class="file-option-btn" onclick="openDocumentClick()">Open</button>
+                            <button type="button" class="file-option-btn" onclick="saveDocument()">Save</button>
+                            <button type="button" class="file-option-btn" onclick="downloadDocument()">Download</button>
+                            <button type="button" class="file-option-btn" onclick="closeDocument()">Close</button>
                         </div>
                     </div>
                 </div>
@@ -468,7 +468,7 @@
 
         <div class="top-bar-right">
             <div class="dropdown-container">
-                <button class="dropdown-btn" id="versionBtn">
+                <button type="button" class="dropdown-btn" id="versionBtn">
                     Version History
                 </button>
                 <div class="dropdown-menu" id="versionDropdown">
@@ -478,17 +478,17 @@
                             <div class="version-item-dropdown">
                                 <div class="version-time-dropdown">Today at 2:45 PM</div>
                                 <div class="version-author-dropdown">by You</div>
-                                <button class="version-view-btn" onclick="viewVersion(1)">View</button>
+                                <button type="button" class="version-view-btn" onclick="viewVersion(1)">View</button>
                             </div>
                             <div class="version-item-dropdown">
                                 <div class="version-time-dropdown">Today at 1:30 PM</div>
                                 <div class="version-author-dropdown">by You</div>
-                                <button class="version-view-btn" onclick="viewVersion(2)">View</button>
+                                <button type="button" class="version-view-btn" onclick="viewVersion(2)">View</button>
                             </div>
                             <div class="version-item-dropdown">
                                 <div class="version-time-dropdown">Yesterday at 4:15 PM</div>
                                 <div class="version-author-dropdown">by You</div>
-                                <button class="version-view-btn" onclick="viewVersion(3)">View</button>
+                                <button type="button" class="version-view-btn" onclick="viewVersion(3)">View</button>
                             </div>
                         </div>
                     </div>
@@ -496,7 +496,7 @@
             </div>
 
             <div class="dropdown-container">
-                <button class="dropdown-btn" id="shareBtn">
+                <button type="button" class="dropdown-btn" id="shareBtn">
                     Share
                 </button>
                 <div class="dropdown-menu" id="shareDropdown">
@@ -504,13 +504,13 @@
                     <div class="dropdown-menu-content">
                         <div class="share-form">
                             <input type="email" class="share-input" id="emailInput" placeholder="Enter email address" />
-                            <button class="share-invite-btn" onclick="inviteCollaborator()">Invite</button>
+                            <button type="button" class="share-invite-btn" onclick="inviteCollaborator()">Invite</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button class="login-btn" onclick="login()">Login</button>
+            <button type="button" class="login-btn" onclick="login()">Login</button>
         </div>
     </div>
 
@@ -526,6 +526,7 @@
 
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script>
     document.addEventListener('click', (e) => {
         if (!e.target.closest('[id$="Dropdown"], [id$="Btn"]')) {
@@ -643,13 +644,29 @@
         const file = event.target.files[0];
         if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('docEditor').value = e.target.result;
-            document.querySelector('.document-title').textContent = file.name;
-            showNotification('Opened ' + file.name);
-        };
-        reader.readAsText(file);
+        if (file.name.endsWith('.docx')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                mammoth.extractRawText({arrayBuffer: e.target.result})
+                    .then(function(result) {
+                        document.getElementById('docEditor').value = result.value;
+                        document.querySelector('.document-title').textContent = file.name;
+                        showNotification('Opened ' + file.name);
+                    })
+                    .catch(function(err) {
+                        showNotification('Error reading document');
+                    });
+            };
+            reader.readAsArrayBuffer(file);
+        } else {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('docEditor').value = e.target.result;
+                document.querySelector('.document-title').textContent = file.name;
+                showNotification('Opened ' + file.name);
+            };
+            reader.readAsText(file);
+        }
         
         event.target.value = '';
     }
