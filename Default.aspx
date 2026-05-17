@@ -446,7 +446,7 @@
                         <div style="display: flex; flex-direction: column; gap: 4px;">
                             <button type="button" class="file-option-btn" onclick="newDocument()">New</button>
                             <button type="button" class="file-option-btn" onclick="openDocumentClick()">Open</button>
-                            <button type="button" class="file-option-btn" onclick="saveDocument()">Save</button>
+                            <asp:Button ID="btnSave" runat="server" CssClass="file-option-btn" Text="Save" OnClick="btnSave_Click" />
                             <button type="button" class="file-option-btn" onclick="downloadDocument()">Download</button>
                             <button type="button" class="file-option-btn" onclick="closeDocument()">Close</button>
                         </div>
@@ -457,6 +457,7 @@
 
         <div class="top-bar-center">
             <div class="document-title">Untitled Document</div>
+            <asp:Label ID="lblStatus" runat="server" style="margin-left: 15px; font-size: 13px;"></asp:Label>
         </div>
 
         <div class="top-bar-right">
@@ -511,6 +512,7 @@
         <textarea 
             class="editor-textarea" 
             id="docEditor" 
+            runat="server"
             placeholder="Start typing here..."
             spellcheck="false"
         ></textarea>

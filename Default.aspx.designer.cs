@@ -13,5 +13,8 @@ namespace CDE
 
     public partial class _Default
     {
+        protected global::System.Web.UI.HtmlControls.HtmlTextArea docEditor;
+        protected global::System.Web.UI.WebControls.Label lblStatus;
+        protected global::System.Web.UI.WebControls.Button btnSave;
     }
 }
