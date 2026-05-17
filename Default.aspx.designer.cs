@@ -16,5 +16,8 @@ namespace CDE
         protected global::System.Web.UI.HtmlControls.HtmlTextArea docEditor;
         protected global::System.Web.UI.WebControls.Label lblStatus;
         protected global::System.Web.UI.WebControls.Button btnSave;
+        protected global::System.Web.UI.WebControls.Button btnVersionHistory;
+        protected global::System.Web.UI.WebControls.GridView gvVersions;
+        protected global::System.Web.UI.WebControls.Label lblVersionStatus;
     }
 }

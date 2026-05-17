@@ -462,28 +462,14 @@
 
         <div class="top-bar-right">
             <div class="dropdown-container">
-                <button type="button" class="dropdown-btn" id="versionBtn" onclick="toggleVersionDropdown()">
-                    Version History
-                </button>
+                <asp:Button ID="btnVersionHistory" runat="server" CssClass="dropdown-btn" Text="Version History" OnClick="btnVersionHistory_Click" />
                 <div class="dropdown-menu" id="versionDropdown">
                     <div class="dropdown-menu-header">Document Versions</div>
                     <div class="dropdown-menu-content">
-                        <div class="version-list-dropdown" id="versionListDropdown">
-                            <div class="version-item-dropdown">
-                                <div class="version-time-dropdown">Today at 2:45 PM</div>
-                                <div class="version-author-dropdown">by You</div>
-                                <button type="button" class="version-view-btn" onclick="viewVersion(1)">View</button>
-                            </div>
-                            <div class="version-item-dropdown">
-                                <div class="version-time-dropdown">Today at 1:30 PM</div>
-                                <div class="version-author-dropdown">by You</div>
-                                <button type="button" class="version-view-btn" onclick="viewVersion(2)">View</button>
-                            </div>
-                            <div class="version-item-dropdown">
-                                <div class="version-time-dropdown">Yesterday at 4:15 PM</div>
-                                <div class="version-author-dropdown">by You</div>
-                                <button type="button" class="version-view-btn" onclick="viewVersion(3)">View</button>
-                            </div>
+                        <div class="version-list-dropdown" id="versionListDropdown" style="max-height: 200px; overflow-y: auto;">
+                            <asp:GridView ID="gvVersions" runat="server" AutoGenerateColumns="True" CssClass="table table-bordered table-sm" Font-Size="12px">
+                            </asp:GridView>
+                            <asp:Label ID="lblVersionStatus" runat="server" Font-Size="12px"></asp:Label>
                         </div>
                     </div>
                 </div>
