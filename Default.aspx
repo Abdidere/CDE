@@ -463,7 +463,7 @@
         <div class="top-bar-right">
             <div class="dropdown-container">
                 <asp:Button ID="btnVersionHistory" runat="server" CssClass="dropdown-btn" Text="Version History" OnClick="btnVersionHistory_Click" />
-                <div class="dropdown-menu" id="versionDropdown">
+                <div class="dropdown-menu" id="versionDropdown" runat="server">
                     <div class="dropdown-menu-header">Document Versions</div>
                     <div class="dropdown-menu-content">
                         <div class="version-list-dropdown" id="versionListDropdown" style="max-height: 200px; overflow-y: auto;">

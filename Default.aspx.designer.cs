@@ -21,6 +21,7 @@ namespace CDE
         protected global::System.Web.UI.WebControls.Button btnVersionHistory;
         protected global::System.Web.UI.WebControls.GridView gvVersions;
         protected global::System.Web.UI.WebControls.Label lblVersionStatus;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl versionDropdown;
         protected global::System.Web.UI.WebControls.Panel openFilesModal;
         protected global::System.Web.UI.WebControls.GridView gvDocuments;
         protected global::System.Web.UI.WebControls.Label lblOpenStatus;
