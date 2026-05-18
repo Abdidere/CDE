@@ -445,7 +445,7 @@
                     <div class="dropdown-menu-content">
                         <div style="display: flex; flex-direction: column; gap: 4px;">
                             <button type="button" class="file-option-btn" onclick="newDocument()">New</button>
-                            <button type="button" class="file-option-btn" onclick="openDocumentClick()">Open</button>
+                            <asp:Button ID="btnOpen" runat="server" CssClass="file-option-btn" Text="Open" OnClick="btnOpen_Click" />
                             <asp:Button ID="btnSave" runat="server" CssClass="file-option-btn" Text="Save" OnClick="btnSave_Click" />
                             <button type="button" class="file-option-btn" onclick="downloadDocument()">Download</button>
                             <button type="button" class="file-option-btn" onclick="closeDocument()">Close</button>
@@ -456,7 +456,7 @@
         </div>
 
         <div class="top-bar-center">
-            <div class="document-title">Untitled Document</div>
+            <h1 class="document-title" id="docTitle" runat="server">Untitled Document</h1>
             <asp:Label ID="lblStatus" runat="server" style="margin-left: 15px; font-size: 13px;"></asp:Label>
         </div>
 
@@ -504,6 +504,32 @@
         ></textarea>
     </div>
 </div>
+
+<asp:Panel ID="openFilesModal" runat="server" CssClass="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            Open Document
+        </div>
+        <div class="modal-body" style="padding: 16px;">
+            <asp:GridView ID="gvDocuments" runat="server" AutoGenerateColumns="False" CssClass="table" OnRowCommand="gvDocuments_RowCommand" GridLines="None" Width="100%">
+                <Columns>
+                    <asp:BoundField DataField="DocumentID" HeaderText="ID" />
+                    <asp:BoundField DataField="Title" HeaderText="Title" />
+                    <asp:BoundField DataField="UpdatedAt" HeaderText="Last Updated" DataFormatString="{0:g}" />
+                    <asp:TemplateField>
+                        <ItemTemplate>
+                            <asp:Button ID="btnOpenDoc" runat="server" CommandName="OpenDoc" CommandArgument='<%# Eval("DocumentID") %>' Text="Open" CssClass="version-view-btn" />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
+            <asp:Label ID="lblOpenStatus" runat="server" ForeColor="Red"></asp:Label>
+        </div>
+        <div class="modal-footer" style="padding: 16px; display: flex; justify-content: flex-end;">
+            <asp:Button ID="btnCloseModal" runat="server" Text="Cancel" CssClass="modal-cancel-btn" OnClick="btnCloseModal_Click" />
+        </div>
+    </div>
+</asp:Panel>
 
 
 

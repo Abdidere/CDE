@@ -8,6 +8,47 @@ namespace CDE
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                if (Request.QueryString["docId"] != null)
+                {
+                    int docId;
+                    if (int.TryParse(Request.QueryString["docId"], out docId))
+                    {
+                        LoadDocument(docId);
+                    }
+                }
+            }
+        }
+
+        private void LoadDocument(int docId)
+        {
+            string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CDE;Integrated Security=True;";
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string query = "SELECT Title, Content FROM Documents WHERE DocumentID = @DocumentID";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@DocumentID", docId);
+                        con.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                docTitle.InnerText = reader["Title"].ToString();
+                                docEditor.Value = reader["Content"].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                lblStatus.Text = "Error loading document: " + ex.Message;
+                lblStatus.ForeColor = System.Drawing.Color.Red;
+            }
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -112,6 +153,49 @@ namespace CDE
             {
                 lblVersionStatus.Text = "Error: " + ex.Message;
                 lblVersionStatus.ForeColor = System.Drawing.Color.Red;
+            }
+        }
+
+        protected void btnOpen_Click(object sender, EventArgs e)
+        {
+            string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CDE;Integrated Security=True;";
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string query = "SELECT DocumentID, Title, UpdatedAt FROM Documents ORDER BY UpdatedAt DESC";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                        {
+                            System.Data.DataTable dt = new System.Data.DataTable();
+                            da.Fill(dt);
+                            gvDocuments.DataSource = dt;
+                            gvDocuments.DataBind();
+                            
+                            openFilesModal.Style["display"] = "flex";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                lblStatus.Text = "Error fetching documents: " + ex.Message;
+                lblStatus.ForeColor = System.Drawing.Color.Red;
+            }
+        }
+
+        protected void btnCloseModal_Click(object sender, EventArgs e)
+        {
+            openFilesModal.Style["display"] = "none";
+        }
+
+        protected void gvDocuments_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "OpenDoc")
+            {
+                string docId = e.CommandArgument.ToString();
+                Response.Redirect("~/Default.aspx?docId=" + docId);
             }
         }
     }

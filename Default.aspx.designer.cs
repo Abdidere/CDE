@@ -13,11 +13,17 @@ namespace CDE
 
     public partial class _Default
     {
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl docTitle;
         protected global::System.Web.UI.HtmlControls.HtmlTextArea docEditor;
         protected global::System.Web.UI.WebControls.Label lblStatus;
+        protected global::System.Web.UI.WebControls.Button btnOpen;
         protected global::System.Web.UI.WebControls.Button btnSave;
         protected global::System.Web.UI.WebControls.Button btnVersionHistory;
         protected global::System.Web.UI.WebControls.GridView gvVersions;
         protected global::System.Web.UI.WebControls.Label lblVersionStatus;
+        protected global::System.Web.UI.WebControls.Panel openFilesModal;
+        protected global::System.Web.UI.WebControls.GridView gvDocuments;
+        protected global::System.Web.UI.WebControls.Label lblOpenStatus;
+        protected global::System.Web.UI.WebControls.Button btnCloseModal;
     }
 }
