@@ -130,7 +130,7 @@
 </style>
 
 <div class="login-container">
-    <form class="login-form" runat="server">
+    <asp:Panel DefaultButton="loginButton" CssClass="login-form" runat="server">
         <h1 class="login-title">Login</h1>
 
         <div class="error-message" id="errorMessage" runat="server"></div>
@@ -150,7 +150,7 @@
         <div class="signup-link">
             Don't have an account? <a href="Signup.aspx">Sign up</a>
         </div>
-    </form>
+    </asp:Panel>
 </div>
 
 </asp:Content>
