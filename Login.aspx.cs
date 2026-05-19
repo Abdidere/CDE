@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.Data.SqlClient;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace CDE
 {
@@ -11,7 +10,13 @@ namespace CDE
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (!IsPostBack)
+            {
+                if (Session["UserID"] != null)
+                {
+                    Response.Redirect("Default.aspx");
+                }
+            }
         }
 
         protected void LoginButton_Click(object sender, EventArgs e)
@@ -31,7 +36,46 @@ namespace CDE
                 return;
             }
 
-            Response.Redirect("Default.aspx");
+            string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CDE;Integrated Security=True;";
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+                    string query = "SELECT UserID, PasswordHash, DisplayName FROM Users WHERE Email = @Email";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@Email", email);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                string storedHash = reader["PasswordHash"].ToString();
+                                string inputHash = ComputeSha256Hash(password);
+
+                                if (storedHash == inputHash)
+                                {
+                                    Session["UserID"] = reader["UserID"].ToString();
+                                    Session["DisplayName"] = reader["DisplayName"].ToString();
+                                    Response.Redirect("Default.aspx");
+                                }
+                                else
+                                {
+                                    ShowError("Invalid email or password");
+                                }
+                            }
+                            else
+                            {
+                                ShowError("Invalid email or password");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError("Database error: " + ex.Message);
+            }
         }
 
         private bool IsValidEmail(string email)
@@ -51,6 +95,20 @@ namespace CDE
         {
             errorMessage.InnerText = message;
             errorMessage.Attributes["class"] = "error-message active";
+        }
+
+        private string ComputeSha256Hash(string rawData)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
         }
     }
 }
