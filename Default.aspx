@@ -456,14 +456,14 @@
         </div>
 
         <div class="top-bar-center">
-            <h1 class="document-title" id="docTitle" runat="server">Untitled Document</h1>
+            <h1 class="document-title" id="docTitle" runat="server" ClientIDMode="Static">Untitled Document</h1>
             <asp:Label ID="lblStatus" runat="server" style="margin-left: 15px; font-size: 13px;"></asp:Label>
         </div>
 
         <div class="top-bar-right">
             <div class="dropdown-container">
                 <asp:Button ID="btnVersionHistory" runat="server" CssClass="dropdown-btn" Text="Version History" OnClick="btnVersionHistory_Click" />
-                <div class="dropdown-menu" id="versionDropdown" runat="server">
+                <div class="dropdown-menu" id="versionDropdown" runat="server" ClientIDMode="Static">
                     <div class="dropdown-menu-header">Document Versions</div>
                     <div class="dropdown-menu-content">
                         <div class="version-list-dropdown" id="versionListDropdown" style="max-height: 200px; overflow-y: auto;">
@@ -499,6 +499,7 @@
             class="editor-textarea" 
             id="docEditor" 
             runat="server"
+            ClientIDMode="Static"
             placeholder="Start typing here..."
             spellcheck="false"
         ></textarea>
@@ -702,7 +703,25 @@
     }
 
     function downloadDocument() {
-        showNotification('Downloading document');
+        const titleElement = document.getElementById('docTitle');
+        const editorElement = document.getElementById('docEditor');
+        if (!editorElement || !titleElement) {
+            showNotification('Error: Editor or Title element not found.');
+            return;
+        }
+        const text = editorElement.value;
+        const title = titleElement.innerText.trim() || 'Untitled Document';
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = title.endsWith('.txt') ? title : title + '.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showNotification('Downloaded document successfully');
         document.getElementById('fileDropdown').classList.remove('active');
         document.getElementById('fileBtn').classList.remove('active');
     }
