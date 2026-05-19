@@ -53,12 +53,33 @@ namespace CDE
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
+            txtSaveTitle.Text = docTitle.InnerText;
+            lblSaveModalStatus.Text = "";
+            saveFilesModal.Style["display"] = "flex";
+        }
+
+        protected void btnConfirmSave_Click(object sender, EventArgs e)
+        {
             string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CDE;Integrated Security=True;";
-            int currentDocumentId = 1;
+            int currentDocumentId = 0;
             
             if (Request.QueryString["docId"] != null)
             {
                 int.TryParse(Request.QueryString["docId"], out currentDocumentId);
+            }
+
+            string newTitle = txtSaveTitle.Text.Trim();
+            if (string.IsNullOrEmpty(newTitle))
+            {
+                lblSaveModalStatus.Text = "Document name cannot be empty.";
+                saveFilesModal.Style["display"] = "flex";
+                return;
+            }
+
+            int ownerId = 1;
+            if (Session["UserID"] != null)
+            {
+                ownerId = Convert.ToInt32(Session["UserID"]);
             }
 
             try
@@ -67,13 +88,30 @@ namespace CDE
                 {
                     con.Open();
 
-                    string updateDocQuery = "UPDATE Documents SET Content = @Content, UpdatedAt = @UpdatedAt WHERE DocumentID = @DocumentID";
-                    using (SqlCommand cmdUpdate = new SqlCommand(updateDocQuery, con))
+                    if (currentDocumentId > 0)
                     {
-                        cmdUpdate.Parameters.AddWithValue("@Content", docEditor.Value);
-                        cmdUpdate.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
-                        cmdUpdate.Parameters.AddWithValue("@DocumentID", currentDocumentId);
-                        cmdUpdate.ExecuteNonQuery();
+                        string updateDocQuery = "UPDATE Documents SET Title = @Title, Content = @Content, UpdatedAt = @UpdatedAt WHERE DocumentID = @DocumentID";
+                        using (SqlCommand cmdUpdate = new SqlCommand(updateDocQuery, con))
+                        {
+                            cmdUpdate.Parameters.AddWithValue("@Title", newTitle);
+                            cmdUpdate.Parameters.AddWithValue("@Content", docEditor.Value);
+                            cmdUpdate.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
+                            cmdUpdate.Parameters.AddWithValue("@DocumentID", currentDocumentId);
+                            cmdUpdate.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        string insertDocQuery = "INSERT INTO Documents (OwnerID, Title, Content, CreatedAt, UpdatedAt) VALUES (@OwnerID, @Title, @Content, @CreatedAt, @UpdatedAt); SELECT SCOPE_IDENTITY();";
+                        using (SqlCommand cmdInsert = new SqlCommand(insertDocQuery, con))
+                        {
+                            cmdInsert.Parameters.AddWithValue("@OwnerID", ownerId);
+                            cmdInsert.Parameters.AddWithValue("@Title", newTitle);
+                            cmdInsert.Parameters.AddWithValue("@Content", docEditor.Value);
+                            cmdInsert.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
+                            cmdInsert.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
+                            currentDocumentId = Convert.ToInt32(cmdInsert.ExecuteScalar());
+                        }
                     }
 
                     int nextVersion = 1;
@@ -89,24 +127,36 @@ namespace CDE
                     }
 
                     string insertVersionQuery = "INSERT INTO DocumentVersions (DocumentID, VersionNumber, Content, CreatedAt) VALUES (@DocumentID, @VersionNumber, @Content, @CreatedAt)";
-                    using (SqlCommand cmdInsert = new SqlCommand(insertVersionQuery, con))
+                    using (SqlCommand cmdInsertVersion = new SqlCommand(insertVersionQuery, con))
                     {
-                        cmdInsert.Parameters.AddWithValue("@DocumentID", currentDocumentId);
-                        cmdInsert.Parameters.AddWithValue("@VersionNumber", nextVersion);
-                        cmdInsert.Parameters.AddWithValue("@Content", docEditor.Value);
-                        cmdInsert.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
-                        cmdInsert.ExecuteNonQuery();
+                        cmdInsertVersion.Parameters.AddWithValue("@DocumentID", currentDocumentId);
+                        cmdInsertVersion.Parameters.AddWithValue("@VersionNumber", nextVersion);
+                        cmdInsertVersion.Parameters.AddWithValue("@Content", docEditor.Value);
+                        cmdInsertVersion.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
+                        cmdInsertVersion.ExecuteNonQuery();
                     }
 
+                    docTitle.InnerText = newTitle;
                     lblStatus.Text = "Save successful";
                     lblStatus.ForeColor = System.Drawing.Color.Green;
+                    saveFilesModal.Style["display"] = "none";
+                    
+                    if (Request.QueryString["docId"] == null)
+                    {
+                        Response.Redirect("~/Default.aspx?docId=" + currentDocumentId);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                lblStatus.Text = "Error saving: " + ex.Message;
-                lblStatus.ForeColor = System.Drawing.Color.Red;
+                lblSaveModalStatus.Text = "Error saving: " + ex.Message;
+                saveFilesModal.Style["display"] = "flex";
             }
+        }
+
+        protected void btnCancelSave_Click(object sender, EventArgs e)
+        {
+            saveFilesModal.Style["display"] = "none";
         }
 
         protected void btnVersionHistory_Click(object sender, EventArgs e)
