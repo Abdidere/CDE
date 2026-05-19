@@ -531,6 +531,23 @@
     </div>
 </asp:Panel>
 
+<asp:Panel ID="saveFilesModal" runat="server" CssClass="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            Save Document
+        </div>
+        <div class="modal-body" style="padding: 16px;">
+            <asp:Label ID="lblSavePrompt" runat="server" Text="Document Name:" style="display: block; margin-bottom: 8px; font-weight: 500;"></asp:Label>
+            <asp:TextBox ID="txtSaveTitle" runat="server" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></asp:TextBox>
+            <asp:Label ID="lblSaveModalStatus" runat="server" ForeColor="Red" style="display: block; margin-top: 8px; font-size: 13px;"></asp:Label>
+        </div>
+        <div class="modal-footer" style="padding: 16px; display: flex; justify-content: flex-end; gap: 8px;">
+            <asp:Button ID="btnCancelSave" runat="server" Text="Cancel" CssClass="modal-cancel-btn" OnClick="btnCancelSave_Click" />
+            <asp:Button ID="btnConfirmSave" runat="server" Text="Save" CssClass="version-view-btn" OnClick="btnConfirmSave_Click" />
+        </div>
+    </div>
+</asp:Panel>
+
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
