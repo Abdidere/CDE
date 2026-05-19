@@ -26,5 +26,11 @@ namespace CDE
         protected global::System.Web.UI.WebControls.GridView gvDocuments;
         protected global::System.Web.UI.WebControls.Label lblOpenStatus;
         protected global::System.Web.UI.WebControls.Button btnCloseModal;
+        protected global::System.Web.UI.WebControls.Panel saveFilesModal;
+        protected global::System.Web.UI.WebControls.Label lblSavePrompt;
+        protected global::System.Web.UI.WebControls.TextBox txtSaveTitle;
+        protected global::System.Web.UI.WebControls.Label lblSaveModalStatus;
+        protected global::System.Web.UI.WebControls.Button btnCancelSave;
+        protected global::System.Web.UI.WebControls.Button btnConfirmSave;
     }
 }
